@@ -7,7 +7,7 @@
     },
     {
       "name": "camptocamp/archive",
-      "version_requirement": ">=0.3.6"
+      "version_requirement": ">=0.4.0"
     }
   ],
   "license": "Apache-2.0",
