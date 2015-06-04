@@ -4,7 +4,7 @@ fixtures:
         repo: "https://github.com/puppetlabs/puppetlabs-stdlib.git"
         branch: "3.2.0"
       archive:
-        repo:   "https://github.com/puppet-community/puppet-archive.git"
+        repo:   "https://github.com/camptocamp/puppet-archive.git"
         branch: "0.3.0"
   symlinks:
     'wildfly': '#{source_dir}'

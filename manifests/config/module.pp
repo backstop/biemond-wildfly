@@ -27,8 +27,10 @@ define wildfly::config::module($source = undef, $dependencies = []) {
 
   $file_name = inline_template('<%= File.basename(URI::parse(@source).path) %>')
 
-  archive { "${dir_path}/${file_name}":
-    source        => $source,
+  archive::download { $file_name:
+    url        => $source,
+    src_target => $dir_path,
+    checksum   => false
   }
   ->
   file { "${dir_path}/${file_name}":
