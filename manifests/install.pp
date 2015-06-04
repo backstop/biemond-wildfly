@@ -11,7 +11,7 @@ class wildfly::install  {
   ->
   file { $wildfly::dirname:
     ensure  => directory,
-    user    => $wildfly::user,
+    owner   => $wildfly::user,
     group   => $wildfly::group,
     recurse => true
   }
