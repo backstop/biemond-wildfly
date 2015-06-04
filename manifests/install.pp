@@ -6,6 +6,7 @@ class wildfly::install  {
   archive { "wildfly-${wildfly::version}":
     url              => $wildfly::install_source,
     target           => $wildfly::dirname,
+    checksum         => false,
     strip_components => 1
   }
   ->
