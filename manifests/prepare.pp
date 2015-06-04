@@ -20,15 +20,6 @@ class wildfly::prepare {
     }
   }
 
-  # extract dir
-  file { $wildfly::dirname :
-    ensure  => directory,
-    owner   => $wildfly::user,
-    group   => $wildfly::group,
-    mode    => '0755',
-    require => User[$wildfly::user],
-  }
-
   ## extract dependencies
   $libaiopackage  = $::osfamily ? {
     'RedHat' => 'libaio',
