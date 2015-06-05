@@ -3,18 +3,14 @@
 #
 class wildfly::install  {
 
-  archive { "wildfly-${wildfly::version}":
+  archive::download { "wildfly-${wildfly::version}":
+    ensure           => present,
     url              => $wildfly::install_source,
-    target           => $wildfly::dirname,
-    checksum         => false,
-    strip_components => 1
+    checksum         => false
   }
-  ->
-  file { $wildfly::dirname:
-    ensure  => directory,
-    owner   => $wildfly::user,
-    group   => $wildfly::group,
-    recurse => true
+  ~>
+  exec { 'Unpack wildfly':
+    commmand => "mkdir -p ${wildfly::dirname} && tar --no-same-owner --no-same-permissions -xzf /usr/src/${wildfly-${wildfly::version}}.tar.gz -C ${wildfly::dirname} && chwon -R ${wildfly::user}:${wildfly::group} ${wildfly::dirname}"
+    creates  => $wildfly::dirname
   }
-
 }
