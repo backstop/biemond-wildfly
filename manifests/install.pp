@@ -3,7 +3,7 @@
 #
 class wildfly::install  {
 
-  archive::download { "wildfly-${wildfly::version}":
+  archive::download { "wildfly-${wildfly::version}.tar.gz":
     ensure           => present,
     url              => $wildfly::install_source,
     checksum         => false
