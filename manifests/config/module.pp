@@ -1,18 +1,22 @@
 #
 # Module installation
 #
-define wildfly::config::module($source = undef, $dependencies = []) {
+define wildfly::config::module($system = true, $source = undef, $dependencies = []) {
 
   require wildfly::install
 
   $namespace_path = regsubst($name, '[.]', '/', 'G')
+
+  if $system {
+    $module_dir = 'system/layers/base'
+  }
 
   File {
     owner => $wildfly::user,
     group => $wildfly::group
   }
 
-  $dir_path = "${wildfly::dirname}/modules/system/layers/base/${namespace_path}/main"
+  $dir_path = "${wildfly::dirname}/modules/${module_dir}/${namespace_path}/main"
 
   exec { "Create Parent Directories: ${name}":
     path    => ['/bin','/usr/bin', '/sbin'],
