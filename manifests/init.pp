@@ -27,6 +27,7 @@ class wildfly(
   $ajp_port          = $wildfly::params::ajp_port,
   $users_mgmt        = $wildfly::params::users_mgmt,
   $conf_file         = $wildfly::params::conf_file,
+  $manage_service    = $wildfly::params::manage_service,
   $service_file      = $wildfly::params::service_file,
   $service_name      = $wildfly::params::service_name,
 ) inherits wildfly::params {
@@ -35,11 +36,17 @@ class wildfly(
   include wildfly::install
   include wildfly::prepare
   include wildfly::setup
-  include wildfly::service
+  if $manage_service {
+    include wildfly::service
+  }
 
   Class['archive'] ->
     Class['wildfly::prepare'] ->
       Class['wildfly::install'] ->
-        Class['wildfly::setup'] ->
-          Class['wildfly::service']
+        Class['wildfly::setup']
+
+  if $manage_service {
+    Class['wildfly::setup']->
+      Class['wildfly::service']
+  }
 }

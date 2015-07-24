@@ -1,20 +1,15 @@
 #
 # Wildfly startup service class
 #
-class wildfly::service(
-  $init_source = "${::wildfly::dirname}/bin/init.d/${::wildfly::service_file}",
-  $manage_config = true,
-) {
+class wildfly::service {
 
-  if $manage_config {
-    file { $::wildfly::conf_file:
-      ensure  => present,
-      mode    => '0755',
-      owner   => 'root',
-      group   => 'root',
-      content => template('wildfly/wildfly.conf.erb'),
-      notify  => Service[$::wildfly::service_name]
-    }
+  file { $::wildfly::conf_file:
+    ensure  => present,
+    mode    => '0755',
+    owner   => 'root',
+    group   => 'root',
+    content => template('wildfly/wildfly.conf.erb'),
+    notify  => Service[$::wildfly::service_name]
   }
 
   file { "/etc/init.d/${::wildfly::service_name}":
@@ -22,7 +17,7 @@ class wildfly::service(
     mode   => '0755',
     owner  => 'root',
     group  => 'root',
-    source => $init_source,
+    source => "${::wildfly::dirname}/bin/init.d/${::wildfly::service_file}",
   }
 
   service { $::wildfly::service_name:
