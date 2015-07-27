@@ -10,7 +10,6 @@ class wildfly::setup {
     owner   => $wildfly::user,
     group   => $wildfly::group,
     content => template('wildfly/standalone.conf.erb'),
-    notify  => Class['wildfly::service']
   }
 
   if ($wildfly::mode == 'standalone') {
