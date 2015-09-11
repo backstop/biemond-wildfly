@@ -2,8 +2,8 @@ require 'uri'
 require 'net/http'
 require 'cgi'
 require 'json'
-require 'puppet_x/util/wildfly_cli_assembler'
-require 'puppet_x/util/digest_auth'
+require File.expand_path(File.join(File.dirname(__FILE__), "wildfly_cli_assembler.rb"))
+require File.expand_path(File.join(File.dirname(__FILE__), "digest_auth.rb"))
 
 module PuppetX
   module Util
