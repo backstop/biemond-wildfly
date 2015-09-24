@@ -199,7 +199,7 @@ module PuppetX
           else
             { k => v }
           end
-        end
+        end.reduce({}, :merge)
         old_state.reject {|k,v| v == nil}.merge(Hash[map_list])
       end
 
