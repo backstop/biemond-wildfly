@@ -193,14 +193,14 @@ module PuppetX
       private
 
       def recursive_merge_state(old_state, new_state)
-        map_list = new_state.map do |k,v|
+        map = new_state.map do |k,v|
           if v.is_a?(Hash) and old_state.fetch(k, nil).is_a?(Hash)
             { k => recursive_merge_state(old_state[k], v) }
           else
             { k => v }
           end
         end.reduce({}, :merge)
-        old_state.reject {|k,v| v == nil}.merge(Hash[map_list])
+        old_state.reject {|k,v| v == nil}.merge(map)
       end
 
       def split_resources(name, state)
