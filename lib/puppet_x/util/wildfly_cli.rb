@@ -10,22 +10,13 @@ module PuppetX
     class WildflyCli
       include WildflyCliAssembler
 
-      @@instance = nil
-
-      def initialize(address, port, user, password)
+      def initialize(address, port, user, password, timeout = 60)
         @uri = URI.parse "http://#{address}:#{port}/management"
         @uri.user = CGI.escape(user)
         @uri.password = CGI.escape(password)
 
         @http_client = Net::HTTP.new @uri.host, @uri.port
-      end
-
-      def self.instance(address, port, user, password)
-        if @@instance.nil?
-          @@instance = new(address, port, user, password)
-        end
-
-        @@instance
+        @http_client.read_timeout = timeout
       end
 
       def add_recursive(resource, state)
@@ -79,46 +70,26 @@ module PuppetX
         response['outcome'] == 'success' ? response['result'] : {}
       end
 
-      def update_recursive(resource, state, merge = false)
-        if merge
-          old_state = read(resource, true)
-          state = recursive_merge_state(old_state, state)
-        end
-
-        remove = {
-          :address => assemble_address(resource),
-          :operation => :remove
-        }
-
+      def update_recursive(resource, state)
         all_resources = split_resources(resource, state)
 
-        steps = all_resources.map { |(name, state)| add_body(name, state) }
+        steps = all_resources.map { |(name, state)| attrs_to_update(name, state).map {|(k, v)| write_attr_body(name, k, v)}}.flatten(1)
 
         composite = {
           :address => [],
           :operation => :composite,
-          :steps => [remove].concat(steps)
+          :steps => steps
         }
 
         send(composite)
       end
 
-      def update(resource, state, merge = false)
-        if merge
-           state = read(resource).merge(state)
-        end
-
-        remove = {
-          :address => assemble_address(resource),
-          :operation => :remove
-        }
-
-        add = add_body(resource, state)
-
+      def update(resource, state)
+        updates = attrs_to_update(resource, state).map {|(k, v)| write_attr_body(resource, k, v)}
         composite = {
           :address => [],
           :operation => :composite,
-          :steps => [remove, add]
+          :steps => updates
         }
 
         send(composite)
@@ -211,6 +182,11 @@ module PuppetX
         [base_state].concat(child_resources)
       end
 
+      def attrs_to_update(resource, state)
+        current_state = read(resource)
+        state.select { |k,v| current_state[k] != v }
+      end
+
       def add_body(resource, state)
         body = {
           :address => assemble_address(resource),
@@ -218,6 +194,15 @@ module PuppetX
         }
 
         body.merge(state)
+      end
+
+      def write_attr_body(resource, name, value)
+        {
+          :address => assemble_address(resource),
+          :operation => 'write-attribute',
+          :name => name,
+          :value => value
+        }
       end
 
       def add_content(name, source)

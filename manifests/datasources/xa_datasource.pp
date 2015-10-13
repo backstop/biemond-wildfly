@@ -8,7 +8,6 @@ define wildfly::datasources::xa_datasource($config = undef, $target_profile = un
   wildfly::util::resource { "/subsystem=datasources/xa-data-source=${name}":
     content         => $config,
     recursive       => true,
-    merge_on_update => true,
     profile         => $target_profile,
   }
   ->

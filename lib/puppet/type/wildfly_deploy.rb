@@ -38,6 +38,15 @@ Puppet::Type.newtype(:wildfly_deploy) do
     defaultto 9990
   end
 
+  newparam(:timeout) do
+    desc 'Operation timeout. Defaults to 120'
+    defaultto 120
+
+    munge do |value|
+      value.to_i
+    end
+  end
+
   newproperty(:content) do
     desc 'SHA1 of deployed content'
     defaultto ''

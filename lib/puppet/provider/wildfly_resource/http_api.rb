@@ -4,7 +4,7 @@ Puppet::Type.type(:wildfly_resource).provide(:http_api) do
   desc 'Uses JBoss HTTP API to manipulate a resource'
 
   def cli
-    PuppetX::Util::WildflyCli.instance(@resource[:host], @resource[:port], @resource[:username], @resource[:password])
+    PuppetX::Util::WildflyCli.new(@resource[:host], @resource[:port], @resource[:username], @resource[:password])
   end
 
   def create
@@ -34,9 +34,9 @@ Puppet::Type.type(:wildfly_resource).provide(:http_api) do
   def state=(value)
     debug "Updating state for: #{@resource[:path]} with #{@resource[:state].inspect}"
     if @resource[:recursive]
-      cli.update_recursive(@resource[:path], value, @resource[:merge_on_update])
+      cli.update_recursive(@resource[:path], value)
     else
-      cli.update(@resource[:path], value, @resource[:merge_on_update])
+      cli.update(@resource[:path], value)
     end
   end
 end
