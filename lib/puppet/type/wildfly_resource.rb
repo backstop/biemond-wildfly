@@ -54,10 +54,18 @@ Puppet::Type.newtype(:wildfly_resource) do
     def change_to_s(current_value, new_value)
       changed_keys = (new_value.to_a - current_value.to_a).collect { |key, _|  key }
 
-      current_value = current_value.delete_if { |key, _| !changed_keys.include? key }.inspect
-      new_value = new_value.delete_if { |key, _| !changed_keys.include? key }.inspect
+      current_value = current_value.delete_if { |key, _| !changed_keys.include? key }
+      new_value = new_value.delete_if { |key, _| !changed_keys.include? key }
 
-      super(current_value, new_value)
+      # Hide password from logging
+      if current_value.is_a?(Hash) && current_value.has_key?('password')
+        current_value['password'] = 'REDACTED'
+      end
+      if new_value.is_a?(Hash) && new_value.has_key?('password')
+        new_value['password'] = 'REDACTED'
+      end
+
+      super(current_value.inspect, new_value.inspect)
     end
   end
 
